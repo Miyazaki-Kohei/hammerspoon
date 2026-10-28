@@ -8,6 +8,7 @@ macOS の [Hammerspoon](https://www.hammerspoon.org/) 設定（`~/.hammerspoon`�
 |---|---|
 | `init.lua` | エントリポイント。`hs` CLI（`hs.ipc`）と各モジュールを読み込む |
 | `chrome_translate.lua` | Chrome 標準のページ翻訳を「原文 ⇔ 日本語」で切り替える |
+| `streamdeck_reconnect.lua` | Stream Deck のアプリが本体との接続に失敗したら、アプリを再起動する |
 
 ## セットアップ
 
@@ -27,3 +28,12 @@ macOS の [Hammerspoon](https://www.hammerspoon.org/) 設定（`~/.hammerspoon`�
 - ホットキーは Chrome が前面のときだけ有効で、他のアプリのキー入力は奪わない
 - 翻訳アイコンが出ていないページ（日本語のページなど）では、アラートを出すだけで終わる
 - Chrome の UI 構造（翻訳アイコンの読み上げ名「翻訳」、バブル内の言語タブ）に依存する。Chrome の更新で動かなくなったら ⌃⌥⇧T の出力で構造を確かめる
+
+## streamdeck_reconnect
+
+スリープ復帰時などに、Stream Deck のアプリが本体を読み取れず（`Read FW version: FAILED`）、接続をあきらめたまま止まることがある。これを検出してアプリを再起動する。
+
+- アプリのログ `~/Library/Logs/ElgatoStreamDeck/StreamDeck.log` を 5 秒ごとに読み、`Problem with connecting HID device` が出たら、アプリを終了してバックグラウンドで起動し直す
+- 再起動は続けて 3 回まで。それでもつながらなければ、USB ケーブルの挿し直しを促す通知を出して止める
+- Hammerspoon の読み込み時点で接続に失敗したままなら、すぐに再起動する
+- アプリのログの文言に依存する。アプリの更新で動かなくなったら、ログの失敗時と接続時の行を確かめて `config` を直す
